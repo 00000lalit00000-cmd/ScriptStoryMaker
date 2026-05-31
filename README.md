@@ -15,7 +15,7 @@ Lightweight local-first app to convert story scripts or song lyrics into short v
 
 ## Setup
 
-1. Install Python 3.11+.
+1. Install Python 3.11 or 3.12 for the most compatible experience.
 2. Install FFmpeg and add it to your system `PATH`.
 3. Create a virtual environment and install dependencies:
 
@@ -33,6 +33,8 @@ $env:SD_MODEL_PATH = 'C:\path\to\stable-diffusion-model'
 ```
 
 5. If you do not set `SD_MODEL_PATH`, the app will download `runwayml/stable-diffusion-v1-5` from Hugging Face when first run.
+
+6. If you are using Python 3.14, note that the `TTS` package may not install; the app will still fall back to `pyttsx3` for voice output.
 
 ## Run
 

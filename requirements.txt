@@ -4,8 +4,8 @@ diffusers
 transformers
 accelerate
 safetensors
-TTS
 numpy
 Pillow
 langdetect
 pyttsx3
+TTS; python_version < '3.14'
