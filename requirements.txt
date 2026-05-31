@@ -1,0 +1,11 @@
+streamlit
+torch
+diffusers
+transformers
+accelerate
+safetensors
+TTS
+numpy
+Pillow
+langdetect
+pyttsx3

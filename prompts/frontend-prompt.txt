@@ -1,0 +1,20 @@
+You are a senior full-stack AI engineer and system architect. Build the frontend for a lightweight, local-first web application that converts story scripts or song lyrics into short vertical videos (1080x1920, 9:16 MP4).
+
+Requirements:
+- Use Streamlit for simplicity.
+- Provide a minimal, clean UI with:
+  - plain text input area for story or song lyrics
+  - language selector: Auto / EN / HI / MR
+  - style selector: cartoon/kids or realistic
+  - Generate button
+  - video preview and download link
+- Connect to Python backend pipeline functions for:
+  - language detection
+  - scene splitting
+  - image generation
+  - voice generation
+  - video rendering
+- Display progress messages during processing.
+- Save files under a local output folder and show the final MP4 in the UI.
+- Keep the frontend code modular and easy to integrate with Python backend services.
+- Provide clear comments for each section.

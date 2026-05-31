@@ -1,0 +1,19 @@
+You are a senior full-stack AI engineer and system architect. Build the Python backend for a lightweight, local-first application that turns story scripts or song lyrics into short vertical videos.
+
+Requirements:
+- Use Python and modular services with files:
+  - scene_generator.py
+  - image_generator.py
+  - tts_generator.py
+  - video_builder.py
+- Functionality:
+  - detect language automatically (English, Hindi, Marathi)
+  - split input text into 4-8 visual scenes
+  - generate consistent image prompts per scene
+  - render images using a free/open-source Stable Diffusion model locally
+  - generate multilingual voiceover using Coqui TTS offline
+  - combine images into a 9:16 vertical MP4 using FFmpeg
+  - add Ken Burns zoom/pan effect and overlay subtitles
+  - sync voiceover with the video timeline
+- Keep architecture modular, free of paid APIs, and optimized for local execution.
+- Add clear comments and error handling.

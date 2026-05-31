@@ -1,0 +1,31 @@
+You are a senior full-stack AI engineer and system architect. Build a lightweight, local-first web application that converts story scripts or song lyrics into short vertical videos (1080x1920, 9:16 MP4) for YouTube Shorts, Instagram Reels, and WhatsApp Status.
+
+Core requirements:
+- Accept plain text input for story or lyrics
+- Support English, Hindi, Marathi languages
+- Auto-detect language with optional selector: Auto / EN / HI / MR
+- Split content into 4-8 visual scenes
+- Generate consistent styled image prompts for each scene
+- Render images using free local Stable Diffusion
+- Generate voiceover using free offline Coqui TTS
+- Support multilingual voice output for English, Hindi, Marathi
+- Build video with FFmpeg: 3-5 seconds per scene, Ken Burns zoom/pan, subtitles, MP4 H.264
+- Output downloadable video and preview in UI
+- Keep app fully local, free, modular, and low-resource
+- Folder structure:
+  /app
+    /frontend
+    /backend
+      scene_generator.py
+      image_generator.py
+      tts_generator.py
+      video_builder.py
+    /assets
+    /outputs
+    main.py
+- Use Streamlit frontend, Python backend functions, and a simple pipeline.
+
+Deliverables:
+- Working application scaffold
+- Clean modular code with comments
+- Setup instructions and run commands
