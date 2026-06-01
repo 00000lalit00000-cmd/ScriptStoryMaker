@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Streamlit cache
+.cache/
+
+# Logs and database files
+*.log
+*.sqlite3
+
+# Output directories
+app/outputs/
+
+# Hugging Face model cache and downloads
+cache/
+*.ckpt
+*.safetensors
+
+# System files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Python packaging
+pip-wheel-metadata/
+*.egg-info/
+build/
+dist/

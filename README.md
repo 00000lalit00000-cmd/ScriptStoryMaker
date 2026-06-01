@@ -49,3 +49,29 @@ Then open the Streamlit URL shown in the terminal.
 - The first run may download TTS models and Stable Diffusion weights.
 - For Marathi/Hindi voice, Coqui multilingual models are used when available.
 - Output files are saved to `app/outputs/`.
+
+## Performance Optimizations
+
+The app has been optimized for speed:
+
+1. **Image Generation**:
+   - Reduced inference steps from 25 → 15 (~40% faster)
+   - Reduced resolution from 1280x768 → 960x576 for faster processing
+   - Uses float16 precision on GPU (float32 on CPU)
+   - Pipeline model is cached across scenes to avoid reloading
+
+2. **Video Encoding**:
+   - FFmpeg uses `ultrafast` preset instead of default (much faster)
+   - Reduced quality setting (CRF 28 vs 23) for acceptable quality with faster encoding
+   - Removed Ken Burns zoom/pan effect (complex filter = slow)
+   - Simplified to scale + text overlay only
+   - Output is suppressed to reduce I/O overhead
+
+3. **Expected Times** (rough estimates on CPU):
+   - 5-scene video: ~2–5 minutes
+   - With GPU: ~30–60 seconds
+
+To improve performance further:
+- Use a GPU if available (CUDA-capable NVIDIA card)
+- Reduce text quality by setting fewer inference steps in `image_generator.py`
+- Use a smaller/faster model instead of Stable Diffusion v1.5

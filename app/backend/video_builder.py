@@ -31,9 +31,10 @@ def _get_audio_duration(audio_path: Path) -> float:
 def _create_scene_clip(image_path: Path, scene_text: str, duration: int, output_path: Path) -> None:
     font_option = _get_font_option()
     escaped_text = _escape_text(scene_text)
+    # Simplified filter chain: reduced resolution scale, removed complex zoompan for speed
+    # Use basic scale and text overlay only for faster encoding
     filter_parts = [
         f"scale={WIDTH}:{HEIGHT}",
-        f"zoompan=z='min(zoom+0.0008,1.1)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={int(duration * FRAME_RATE)}",
         f"fps={FRAME_RATE}",
         f"drawtext={font_option}:text='{escaped_text}':fontcolor=white:fontsize=40:box=1:boxcolor=black@0.6:boxborderw=10:x=(w-text_w)/2:y=h-220"
     ]
@@ -52,6 +53,10 @@ def _create_scene_clip(image_path: Path, scene_text: str, duration: int, output_
             filter_chain,
             "-c:v",
             "libx264",
+            "-preset",
+            "ultrafast",  # Fast encoding preset
+            "-crf",
+            "28",  # Higher CRF = lower quality but faster (default 23)
             "-pix_fmt",
             "yuv420p",
             "-movflags",
@@ -59,6 +64,8 @@ def _create_scene_clip(image_path: Path, scene_text: str, duration: int, output_
             str(output_path),
         ],
         check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
 
 
@@ -82,6 +89,8 @@ def _concat_clips(clips: List[Path], output_path: Path) -> None:
             str(output_path),
         ],
         check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
 
 
@@ -110,6 +119,10 @@ def build_vertical_video(
             str(audio_path),
             "-c:v",
             "libx264",
+            "-preset",
+            "ultrafast",  # Fast encoding preset
+            "-crf",
+            "28",  # Higher CRF = lower quality but faster
             "-c:a",
             "aac",
             "-shortest",
@@ -118,6 +131,8 @@ def build_vertical_video(
             str(final_video_path),
         ],
         check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
 
     return final_video_path
