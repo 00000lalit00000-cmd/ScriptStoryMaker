@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Callable, Optional
 
 try:
     from TTS.api import TTS
@@ -23,10 +23,18 @@ def _select_model(language: str) -> str:
     return MODEL_MAP.get(language, MODEL_MAP["en"])
 
 
-def generate_voice(text: str, language: str, output_dir: Path) -> Path:
+def generate_voice(
+    text: str,
+    language: str,
+    output_dir: Path,
+    stop_callback: Optional[Callable[[], bool]] = None,
+) -> Path:
     """Generate multilingual voiceover and save as WAV."""
     output_dir.mkdir(parents=True, exist_ok=True)
     audio_path = output_dir / f"voice_{language}.wav"
+
+    if stop_callback is not None and stop_callback():
+        raise RuntimeError("Stopped by user.")
 
     if TTS is not None:
         model_name = _select_model(language)

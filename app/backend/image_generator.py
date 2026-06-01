@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import List
+from typing import Callable, List, Optional
 
 import torch
 from diffusers import StableDiffusionPipeline
@@ -47,13 +47,21 @@ def _scene_prompt(scene_text: str, style: str) -> str:
     return f"{base}, photorealistic detail, realistic style, high resolution"
 
 
-def generate_images(scenes: List[dict], style: str, output_dir: Path) -> List[Path]:
+def generate_images(
+    scenes: List[dict],
+    style: str,
+    output_dir: Path,
+    stop_callback: Optional[Callable[[], bool]] = None,
+) -> List[Path]:
     """Generate one image per scene using Stable Diffusion with optimized settings."""
     output_dir.mkdir(parents=True, exist_ok=True)
     pipe = _get_pipeline()
     image_paths = []
 
     for scene in scenes:
+        if stop_callback is not None and stop_callback():
+            raise RuntimeError("Stopped by user.")
+
         prompt = _scene_prompt(scene["text"], style)
         filename = f"scene_{scene['id']:02d}.png"
         output_path = output_dir / filename
