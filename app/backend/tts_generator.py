@@ -1,4 +1,7 @@
 import os
+import multiprocessing
+import threading
+import time
 from pathlib import Path
 from typing import Callable, Optional
 
@@ -36,16 +39,56 @@ def generate_voice(
     if stop_callback is not None and stop_callback():
         raise RuntimeError("Stopped by user.")
 
-    if TTS is not None:
-        model_name = _select_model(language)
-        tts = TTS(model_name=model_name, progress_bar=False, gpu=False)
-        tts.tts_to_file(text=text, file_path=str(audio_path))
-        return audio_path
-
     if pyttsx3 is not None:
         engine = pyttsx3.init()
-        engine.save_to_file(text, str(audio_path))
-        engine.runAndWait()
+        stop_event = threading.Event()
+
+        def run_engine() -> None:
+            engine.save_to_file(text, str(audio_path))
+            engine.runAndWait()
+            stop_event.set()
+
+        worker = threading.Thread(target=run_engine, daemon=True)
+        worker.start()
+
+        while worker.is_alive():
+            if stop_callback is not None and stop_callback():
+                engine.stop()
+                worker.join(timeout=5)
+                raise RuntimeError("Stopped by user.")
+            time.sleep(0.1)
+
+        return audio_path
+
+    if TTS is not None:
+        model_name = _select_model(language)
+
+        def run_tts_model(model_name: str, text: str, output_path: str) -> None:
+            tts = TTS(model_name=model_name, progress_bar=False, gpu=False)
+            tts.tts_to_file(text=text, file_path=output_path)
+
+        process = multiprocessing.Process(
+            target=run_tts_model,
+            args=(model_name, text, str(audio_path)),
+            daemon=True,
+        )
+        process.start()
+
+        try:
+            while process.is_alive():
+                if stop_callback is not None and stop_callback():
+                    process.terminate()
+                    process.join(timeout=5)
+                    raise RuntimeError("Stopped by user.")
+                time.sleep(0.1)
+        finally:
+            if process.is_alive():
+                process.terminate()
+                process.join(timeout=5)
+
+        if process.exitcode != 0:
+            raise RuntimeError("TTS generation failed.")
+
         return audio_path
 
     raise RuntimeError("No TTS backend is available. Install 'TTS' or 'pyttsx3'.")

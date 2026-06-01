@@ -28,6 +28,7 @@ def _init_session_state() -> None:
     defaults = {
         "running": False,
         "stop_requested": False,
+        "stop_initiated": False,
         "video_path": "",
         "error": "",
         "progress_message": "",
@@ -107,6 +108,7 @@ def _generation_worker(
     finally:
         st.session_state.running = False
         st.session_state.stop_requested = False
+        st.session_state.stop_initiated = False
         st.session_state.thread = None
 
 
@@ -119,6 +121,7 @@ def _start_generation(
 ) -> None:
     st.session_state.running = True
     st.session_state.stop_requested = False
+    st.session_state.stop_initiated = False
     st.session_state.video_path = ""
     st.session_state.error = ""
     st.session_state.progress_message = "Preparing generation..."
@@ -197,8 +200,13 @@ if st.session_state.running:
         with col2:
             if st.button("🛑 Stop", key="stop_btn"):
                 st.session_state.stop_requested = True
+                st.session_state.stop_initiated = True
+                st.session_state.progress_message = "Stop requested. Canceling generation..."
                 st.rerun()
-        
+
+        if st.session_state.stop_initiated:
+            st.warning("🛑 Stop requested. Waiting for the pipeline to cancel...")
+
         # Animated progress bar
         progress_bar = st.progress(0.3)
         st.caption("🎬 Each step can be interrupted now with step-level cancellation")
